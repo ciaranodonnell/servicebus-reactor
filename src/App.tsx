@@ -1,26 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
+import ConnectionBox from './ConnectionBox';
+//import logo from './logo.svg';
 import './App.css';
+import * as sbm from './AzureServiceBusManager';
+//import { Stack } from '@fluentui/react';
+import { useEffect } from 'react';
+import { ServiceBusDetails } from './ServiceBusDetails';
 
 function App() {
+
+  const [serviceBus, setServiceBus] = React.useState<sbm.AzureServiceBusManager | undefined>(undefined);
+  const [namespace, setNamespace] = React.useState<string>("");
+
+  useEffect(() => { document.title = `Message Manager ${namespace}` }, [serviceBus]);
+
+
+  const handleConnect = (conString: string) => {
+    console.log("Connecting to:", conString);
+    setServiceBus(new sbm.AzureServiceBusManager(conString));
+    if (serviceBus !== undefined) {
+      setNamespace(serviceBus?.namespace);
+    }
+  };
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <ConnectionBox connectionString={""} handleConnect={handleConnect} />
+      {serviceBus !== undefined && <ServiceBusDetails serviceBus={serviceBus} key={serviceBus?.connectionString} />}
+    </>
   );
+
 }
 
 export default App;
+

@@ -1,0 +1,9 @@
+
+.queueExplorer{
+    width: 100%;
+    min-width: 750px;
+    text-align: left;
+}
+.missingValue {
+    opacity: 0.25;
+}
