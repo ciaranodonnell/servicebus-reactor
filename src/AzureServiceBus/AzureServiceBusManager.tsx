@@ -1,56 +1,8 @@
 import * as asb from "@azure/service-bus"
-//import * as asbm from "@azure/arm-servicebus"
+import { Queue } from "./Queue";
+import { Topic } from "./Topic";
 
-
-
-export interface Endpoint {
-    isTopic: boolean;
-    name: string;
-    isPartitioned: boolean;
-}
-
-export class Topic implements Endpoint {
-
-    name: string;
-    properties: asb.TopicProperties;
-
-    constructor(properties: asb.TopicProperties) {
-        this.name = properties.name;
-        this.properties = properties;
-
-    }
-    get key(): string { return this.name; }
-    get isTopic(): boolean { return true; }
-
-    get isPartitioned(): boolean { return this.properties.enablePartitioning; }
-}
-export class Queue {
-
-
-    name: string;
-    properties: asb.QueueProperties;
-    sb: asb.ServiceBusAdministrationClient;
-    runtimeProps: asb.WithResponse<asb.QueueRuntimeProperties> | undefined;
-
-    constructor(properties: asb.QueueProperties, sb: asb.ServiceBusAdministrationClient) {
-        this.name = properties.name;
-        this.properties = properties;
-        this.sb = sb;
-    }
-    async loadRuntimeValues(): Promise<void> {
-        this.runtimeProps = await this.sb.getQueueRuntimeProperties(this.name);
-        console.log("loadRuntimeValues", this.runtimeProps, this.activeMessageCount);
-    }
-    get isTopic(): boolean { return true; }
-
-    get isPartitioned(): boolean { return this.properties.enablePartitioning; }
-
-    get maxDeliveryCount(): number { return this.properties.maxDeliveryCount; }
-
-    get requiresSession(): boolean { return this.properties.requiresSession; }
-
-    get activeMessageCount(): number | undefined { return this.runtimeProps?.activeMessageCount; }
-}
+export { Queue, Topic }
 
 export class AzureServiceBusManager {
     private _connectionString: string;
