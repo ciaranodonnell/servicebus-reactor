@@ -1,7 +1,7 @@
 import React from 'react';
 import TopicList from './TopicList';
 import QueueList from './QueueList';
-import * as sbm from './AzureServiceBusManager';
+import { AzureServiceBusManager, Queue, Topic } from './AzureServiceBus/AzureServiceBusManager';
 import { SubscriptionList } from './SubscriptionList';
 import { QueueExplorer } from './QueueExplorer';
 import Grid from '@mui/material/Grid';
@@ -11,19 +11,19 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 export interface ServiceBusProps {
-    serviceBus: sbm.AzureServiceBusManager;
+    serviceBus: AzureServiceBusManager;
 }
 
 export function ServiceBusDetails(props: ServiceBusProps) {
 
-    const [selectedItem, setSelectedItem] = React.useState<sbm.Queue | sbm.Topic | undefined>();
+    const [selectedItem, setSelectedItem] = React.useState<Queue | Topic | undefined>();
     const [selectedTab, setSelectedTab] = React.useState(0);
 
-    function newQueueSelected(queue: sbm.Queue) {
+    function newQueueSelected(queue: Queue) {
         setSelectedItem(queue);
     }
 
-    function newTopicSelected(topic: sbm.Topic) {
+    function newTopicSelected(topic: Topic) {
         setSelectedItem(topic);
     }
 
@@ -65,8 +65,8 @@ export function ServiceBusDetails(props: ServiceBusProps) {
     };
 
     return (
-        <Grid container>
-            <Grid item xs={3}>
+        <Grid container columnGap={2} width={"100%"} >
+            <Grid item xs={3} style={{ "overflow": 'auto' }}>
                 <Tabs value={selectedTab} onChange={handleChange} variant="fullWidth" >
                     <Tab label="Queues" {...a11yProps(0)} />
                     <Tab label="Topics"  {...a11yProps(1)} />
@@ -74,14 +74,16 @@ export function ServiceBusDetails(props: ServiceBusProps) {
                 <TabPanel value={selectedTab} index={0}>
                     <QueueList serviceBus={props.serviceBus} newQueueSelected={newQueueSelected} />
                 </TabPanel>
-                <TabPanel value={selectedTab} index={1}>
-                    <TopicList serviceBus={props.serviceBus} />
+                <TabPanel value={selectedTab} index={1} >
+                    <div style={{ "backgroundColor": "red" }}>
+                        <TopicList serviceBus={props.serviceBus} newTopicSelected={newTopicSelected} />
+                    </div>
                 </TabPanel>
             </Grid>
-            <Grid item xs={9}>
+            <Grid item lg={5}>
                 <div>
                     {selectedItem === undefined ? (<></>) :
-                        selectedItem instanceof sbm.Queue ? (
+                        selectedItem instanceof Queue ? (
 
                             <QueueExplorer queue={selectedItem} key={selectedItem.name} />
                         ) : (

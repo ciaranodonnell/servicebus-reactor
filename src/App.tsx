@@ -2,7 +2,7 @@ import React from 'react';
 import ConnectionBox from './ConnectionBox';
 //import logo from './logo.svg';
 import './App.css';
-import * as sbm from './AzureServiceBusManager';
+import * as sbm from './AzureServiceBus/AzureServiceBusManager';
 //import { Stack } from '@fluentui/react';
 import { useEffect } from 'react';
 import { ServiceBusDetails } from './ServiceBusDetails';

@@ -7,3 +7,9 @@
 .missingValue {
     opacity: 0.25;
 }
+
+.queueName{
+    font-weight: bold;
+    font-size: 1.2em;
+    color:darkgray;
+}

@@ -1,93 +1,76 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './QueueTopicList.css';
-import { PrimaryButton, TextField, Stack, Label, DetailsList } from '@fluentui/react';
-import { GroupedList, IGroup } from '@fluentui/react/lib/GroupedList';
-import { IColumn, DetailsRow } from '@fluentui/react/lib/DetailsList';
-import { Selection, SelectionMode, SelectionZone } from '@fluentui/react/lib/Selection';
-import { Toggle, IToggleStyles } from '@fluentui/react/lib/Toggle';
-import { useBoolean, useConst } from '@fluentui/react-hooks';
 
-import * as sbm from './AzureServiceBusManager';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ListItemText from '@mui/material/ListItemText';
+
+import { AzureServiceBusManager } from './AzureServiceBus/AzureServiceBusManager';
+import { Topic } from "./AzureServiceBus/Topic";
 
 interface TopicListProps {
-    serviceBus: sbm.AzureServiceBusManager | undefined;
+    serviceBus: AzureServiceBusManager | undefined;
+    newTopicSelected: (queueName: Topic) => void;
 }
 
 
-interface LoadingData<T> {
+interface LoadData<T> {
     data: T;
     isLoading: boolean;
 }
 
 function TopicList(props: TopicListProps) {
 
-    const [selectedQName, setSelectedQName] = React.useState<string>("");
-    const [topics, setTopics] = React.useState<LoadingData<sbm.Topic[]>>({ isLoading: true, data: [] });
+    console.log("TopicList", "Render Started");
+    const [selectedTName, setSelectedTName] = React.useState<string>("");
+    const [data, setData] = React.useState<LoadData<Topic[]>>({ isLoading: true, data: [] });
     const [sb, setSb] = React.useState(props.serviceBus);
 
-    const selection = new Selection();
-    selection.setItems(topics.data.map((m) => { return { ...m, "key": m.name } }), true);
+    useEffect(() => {
+        const topicsPromise = props.serviceBus?.getTopics().then((t) => {
+            console.log("Topics loaded");
+            setData({ isLoading: false, data: t });
+        });
+    }, [props.serviceBus]);
 
+    const topicSelected = (item: Topic) => {
+        setSelectedTName(item.name);
+        props.newTopicSelected(item);
+    }
 
     if (props.serviceBus === undefined) {
+        console.log("QueueList: props.serviceBus is undefined");
         return (
             <></>
         );
     } else {
-        if (sb !== props.serviceBus) {
-            const topicsPromise = props.serviceBus?.getTopics().then((q) => { setTopics({ isLoading: false, data: q }); });
-            setSb(props.serviceBus);
-        }
-
-        const topicColumns: IColumn[] =
-            [
-                { key: 'type', name: '', fieldName: 'topicOrQueueLetter', minWidth: 10, maxWidth: 20, isIconOnly: true },
-                { key: 'name', name: 'Name', fieldName: 'name', minWidth: 100, maxWidth: 200, isResizable: true },
-                { key: 'isPartitioned', name: 'Partitioned', fieldName: 'isPartitioned', minWidth: 10, maxWidth: 20, isResizable: true, onRender: (item: sbm.Topic) => { return <span>{item.isPartitioned ? "✔️" : "❌"}</span> } }
-            ];
-
-
-        const onRenderCell = (
-            nestingDepth?: number,
-            item?: sbm.Topic,
-            itemIndex?: number,
-            group?: IGroup,
-        ): React.ReactNode => {
-            return item && typeof itemIndex === 'number' && itemIndex > -1 ? (
-                <DetailsRow
-                    columns={topicColumns}
-                    groupNestingDepth={nestingDepth}
-                    item={item}
-                    itemIndex={itemIndex}
-                    selection={selection}
-                    selectionMode={SelectionMode.multiple}
-                    compact={false}
-                    group={group}
-                />
-            ) : null;
-        };
-        const groups = topics.data.map(t => { return { key: t.name, name: t.name, startIndex: 0, count: 1, isCollapsed: true } });
-
+        console.log("TopicList", "data.isLoading", data.isLoading);
         return (
-            <div className="queueListContainer">
-                <Stack>
-                    <Label>
-                        {topics.isLoading ? "Loading Topics..." : topics.data.length.toString() + " Topics:"}
-                    </Label>
-                    <GroupedList
-                        items={topics.data}
-                        onRenderCell={onRenderCell}
-                        selection={selection}
-                        selectionMode={SelectionMode.multiple}
-                        groups={groups}
-                        compact={false}
-                    />
-                </Stack>
+            <div className="topicListContainer">
+                <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }} component="nav">
+                    {data.isLoading ? "Loading Topics..." : (
+                        <List>
+                            {data.data.map((item) => {
+                                return (
+                                    <ListItemButton
+                                        selected={item.name == selectedTName}
+                                        key={item.name}
+                                        onClick={() => { topicSelected(item); }}
+                                    >
+                                        <ListItemText primary={item.name} />
+                                        <ArrowForwardIosIcon color={item.name == selectedTName ? "primary" : "disabled"} />
+                                    </ListItemButton>
+                                );
+                            })}
+                        </List>
+                    )}
+                </Box>
             </div>
         );
 
 
-        return <> </>;
     }
 }
 

@@ -4,17 +4,14 @@ import './QueueTopicList.css';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ListItemText from '@mui/material/ListItemText';
 
-import * as sbm from './AzureServiceBusManager';
-import { IconButton } from '@mui/material';
-
+import { AzureServiceBusManager, Queue } from './AzureServiceBus/AzureServiceBusManager';
 interface QueueListProps {
-    serviceBus: sbm.AzureServiceBusManager | undefined;
-    newQueueSelected: (queueName: sbm.Queue) => void;
+    serviceBus: AzureServiceBusManager | undefined;
+    newQueueSelected: (queueName: Queue) => void;
 }
 
 
@@ -26,7 +23,7 @@ interface LoadData<T> {
 function QueueList(props: QueueListProps) {
     console.log("QueueList", "Render Started");
     const [selectedQName, setSelectedQName] = React.useState<string>("");
-    const [data, setData] = React.useState<LoadData<sbm.Queue[]>>({ isLoading: true, data: [] });
+    const [data, setData] = React.useState<LoadData<Queue[]>>({ isLoading: true, data: [] });
     const [sb, setSb] = React.useState(props.serviceBus);
 
     useEffect(() => {
@@ -36,7 +33,7 @@ function QueueList(props: QueueListProps) {
         });
     }, [props.serviceBus]);
 
-    const queueSelected = (item: sbm.Queue) => {
+    const queueSelected = (item: Queue) => {
         setSelectedQName(item.name);
         props.newQueueSelected(item);
     }
@@ -71,8 +68,6 @@ function QueueList(props: QueueListProps) {
             </div>
         );
 
-
-        return <> </>;
     }
 }
 

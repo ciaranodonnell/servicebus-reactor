@@ -1,16 +1,24 @@
 import React, { useEffect } from "react";
 
 import './QueueExplorer.css';
-import { Queue } from "./AzureServiceBusManager";
-import Paper from '@mui/material/Paper';
+import { Queue } from "./AzureServiceBus/AzureServiceBusManager";
+//import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import { couldStartTrivia } from "typescript";
-
+import Box from '@mui/material/Box';
+import { FormatBytesForPresentation } from "./AppUtils";
 export interface QueueExplorerProps {
     queue: Queue;
 }
 
-function GetValueSpan(name: string, value: string | number | undefined): JSX.Element {
+function IfBooleanThenYesNoOtherwiseValue(value: any): any {
+    if (value === true || value === false) {
+        return value ? "Yes" : "No";
+    } else {
+        return value;
+    }
+}
+
+function GetValueSpan(name: string, value: string | number | boolean | undefined): JSX.Element {
     return (
         <>
             <Grid item xs={3}>
@@ -26,6 +34,9 @@ function GetValueSpan(name: string, value: string | number | undefined): JSX.Ele
     );
 }
 
+function ValueOrLoading(value: string | number | undefined): string | number {
+    return value === undefined ? "Loading..." : value;
+}
 
 export function QueueExplorer(props: QueueExplorerProps) {
 
@@ -36,21 +47,36 @@ export function QueueExplorer(props: QueueExplorerProps) {
     useEffect(() => {
         setRuntimeStateLoaded(false);
         queue.loadRuntimeValues().then(() => {
-            console.log("Loaded runtime state");
+            console.log("Loaded queue runtime state");
             setRuntimeStateLoaded(true);
         });
     }, [queue]);
 
     return <div className="queueExplorer">
-        <h1>{queue.name}</h1>
+        <h1>Queue: <span className="queueName">{queue.name}</span></h1>
+        <Box>
+            <h2>Queue Properties</h2>
+            <Grid container spacing={2}>
+                {GetValueSpan("Maximum Delivery Count", queue.maxDeliveryCount)}
+                {GetValueSpan("Forward To", queue.properties.forwardTo)}
+                {GetValueSpan("Forward DL To", queue.properties.forwardDeadLetteredMessagesTo)}
+                {GetValueSpan("Auto Delete on Idle", queue.properties.autoDeleteOnIdle)}
+                {GetValueSpan("Requires Sessions", IfBooleanThenYesNoOtherwiseValue(queue.requiresSession))}
+            </Grid>
+        </Box>
+        <Box>
+            <h2>Runtime Properties</h2>
+            <Grid container spacing={2}>
+                {GetValueSpan("Total Messages", ValueOrLoading(queue.totalMessageCount))}
+                {GetValueSpan("Dead Lettered Messages", ValueOrLoading(FormatBytesForPresentation(queue.sizeInBytes)))}
 
-        <Grid container spacing={2}>
-            {GetValueSpan("Maximum Delivery Count", queue.maxDeliveryCount)}
-            {GetValueSpan("Forward To", queue.properties.forwardTo)}
-            {GetValueSpan("Forward DL To", queue.properties.forwardDeadLetteredMessagesTo)}
-            {GetValueSpan("Auto Delete on Idle", queue.properties.autoDeleteOnIdle)}
-            {GetValueSpan("Active Messages", queue.activeMessageCount === undefined ? "Loading..." : queue.activeMessageCount)}
-            {GetValueSpan("Loaded", runtimeStateLoaded)}
-        </Grid>
+                {GetValueSpan("Active Messages", ValueOrLoading(queue.activeMessageCount))}
+                {GetValueSpan("Dead Lettered Messages", ValueOrLoading(queue.deadLetterMessageCount))}
+
+                {GetValueSpan("Transfer Messages", ValueOrLoading(queue.transferMessageCount))}
+                {GetValueSpan("Dead Transfer Messages", ValueOrLoading(queue.transferDeadLetterMessageCount))}
+
+            </Grid>
+        </Box>
     </div >;
 }
