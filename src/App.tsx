@@ -12,7 +12,9 @@ function App() {
   const [serviceBus, setServiceBus] = React.useState<sbm.AzureServiceBusManager | undefined>(undefined);
   const [namespace, setNamespace] = React.useState<string>("");
 
-  useEffect(() => { document.title = `Message Manager ${namespace}` }, [serviceBus]);
+  useEffect(() => {
+    document.title = `ServiceBus-Reactor ${namespace === undefined || namespace.length == 0 ? "" : " - " + namespace}`
+  }, [serviceBus]);
 
 
   const handleConnect = (conString: string) => {

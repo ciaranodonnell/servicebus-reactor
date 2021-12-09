@@ -1,8 +1,8 @@
 {
-  "name": "message-manager",
+  "name": "ServiceBus-Reactor",
   "version": "0.1.0",
   "private": true,
-  "main": "main.js",
+  "main": "./public/electron.js",
   "dependencies": {
     "@azure/arm-servicebus": "^4.1.1",
     "@azure/service-bus": "^7.4.0",
