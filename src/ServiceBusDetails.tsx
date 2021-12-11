@@ -1,12 +1,15 @@
 import React from 'react';
-import TopicList from './TopicList';
-import QueueList from './QueueList';
+
 import { AzureServiceBusManager, Queue, Topic } from './AzureServiceBus/AzureServiceBusManager';
-import { SubscriptionList } from './SubscriptionList';
-import { QueueExplorer } from './QueueExplorer';
+
+import { QueueExplorer } from './Queues/QueueExplorer';
+import TopicList from './TopicList';
+import QueueList from './Queues/QueueList';
+
 import Grid from '@mui/material/Grid';
-//import { Tab, Tabs, TabPanel } from './TabPanel';
 import { TabControl, TabPanel } from './TabPanel';
+import { SubscriptionList } from './SubscriptionList';
+
 export interface ServiceBusProps {
     serviceBus: AzureServiceBusManager;
 }
@@ -22,9 +25,6 @@ export function ServiceBusDetails(props: ServiceBusProps) {
     function newTopicSelected(topic: Topic) {
         setSelectedItem(topic);
     }
-
-
-
 
     return (
         <Grid container columnGap={2} width={"100%"} >

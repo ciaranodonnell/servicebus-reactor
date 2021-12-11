@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import './QueueTopicList.css';
+import './QueueList.css';
 //import { Stack, Label, DetailsList } from '@fluentui/react';
 
 import Box from '@mui/material/Box';
@@ -8,7 +8,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ListItemText from '@mui/material/ListItemText';
 
-import { AzureServiceBusManager, Queue } from './AzureServiceBus/AzureServiceBusManager';
+import { AzureServiceBusManager, Queue } from '../AzureServiceBus/AzureServiceBusManager';
 interface QueueListProps {
     serviceBus: AzureServiceBusManager | undefined;
     newQueueSelected: (queueName: Queue) => void;

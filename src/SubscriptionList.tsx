@@ -1,7 +1,4 @@
 import React from 'react';
-import './QueueTopicList.css';
-
-
 
 import * as sbm from './AzureServiceBus/AzureServiceBusManager';
 
