@@ -1,22 +1,20 @@
 import React, { useEffect } from "react";
 
-import './QueueExplorer.css';
-import { Queue } from "./AzureServiceBus/AzureServiceBusManager";
-//import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import Tabs from '@mui/material/Tabs';
-//import Tab from '@mui/material/Tab';
+import { formatBytesForPresentation, ifBooleanThenYesNoOtherwiseValue } from "../AppUtils";
 
+import './QueueExplorer.css';
+import { Queue, ReceivedMessage } from "../AzureServiceBus/AzureServiceBusManager";
+
+import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { formatBytesForPresentation, ifBooleanThenYesNoOtherwiseValue } from "./AppUtils";
 import { Button } from "@mui/material";
-import { DataGrid, GridColDef, GridRowsProp, GridValueGetterSimpleParams } from '@mui/x-data-grid';
-import { ReceivedMessage } from "./AzureServiceBus/ReceivedMessage";
-import { TabControl, TabPanel } from "./TabPanel";
+
+import { TabControl, TabPanel } from "../TabPanel";
+import { MessageList } from "./MessageList";
+
 export interface QueueExplorerProps {
     queue: Queue;
 }
-
 
 class PeekMessagesList {
     isLoaded: boolean;
@@ -28,7 +26,6 @@ class PeekMessagesList {
         this.didError = false;
     }
 }
-
 
 function GetValueSpan(name: string, value: string | number | boolean | undefined): JSX.Element {
     return (
@@ -52,64 +49,7 @@ function getValueOrLoading(value: string | number | undefined): string | number 
 
 
 
-function getGridColumns() {
-    const columns: GridColDef[] = [
-        { field: 'id', headerName: 'Message ID', width: 90 },
-        {
-            field: 'sequenceNumber',
-            headerName: 'Seq',
-            width: 100,
-            editable: false,
-            resizable: true,
-        },
-        {
-            field: 'to',
-            headerName: 'To',
-            width: 100,
-            editable: false,
-            resizable: true,
-        },
-        {
-            field: 'enqueuedTimeUtc',
-            headerName: 'Enqueued UTC',
-            width: 110,
-            editable: false,
-            resizable: true,
-        },
-        {
-            field: 'scheduledEnqueuedTimeUtc',
-            headerName: 'Scheduled Enqueued UTC',
-            width: 110,
-            editable: false,
-            resizable: true,
-        },
-        {
-            field: 'body',
-            headerName: 'body',
-            width: 110,
-            editable: false,
-            resizable: true,
-            valueGetter: (params: GridValueGetterSimpleParams<ReceivedMessage>) => {
-                const body = params.row.body ?? "";
-                return body.length > 100 ? body.substr(0, 100) + "..." : body;
-            },
-        },
-        {
-            field: 'deliveryCount',
-            headerName: 'Delivery Count',
-            width: 110,
-            editable: false,
-            resizable: true,
-        },
-        {
-            field: 'isScheduled',
-            headerName: 'Scheduled',
-            width: 110,
-            editable: false,
-        },
-    ];
-    return columns;
-}
+
 
 export function QueueExplorer(props: QueueExplorerProps) {
 
@@ -151,13 +91,6 @@ export function QueueExplorer(props: QueueExplorerProps) {
         return list;
     }
 
-    function getGridData(): GridRowsProp {
-        const results = queue.lastReceivedMessages.map(m => {
-            return { id: m.messageId, ...m };
-        });
-        console.log("getGridData: " + Object.entries(results[0]));
-        return results;
-    }
 
     return (<div className="queueExplorer">
         <h1>Queue: <span className="queueName">{queue.name}</span></h1>
@@ -198,14 +131,8 @@ export function QueueExplorer(props: QueueExplorerProps) {
                         <Button
                             onClick={() => doPeekMessages(queue)}
                         >Peek Messages</Button>
-                        {messageList.isLoaded ? (
-                            <div style={{ height: '500px' }}>
-                                <DataGrid
-                                    columns={getGridColumns()}
-                                    rows={getGridData()}
-                                ></DataGrid>
-                            </div>
-                        ) : (<div></div>)}
+                        <MessageList didError={messageList.didError} isLoaded={messageList.isLoaded}
+                            queue={queue} />
                     </Box>
                 </div>
             </TabPanel>

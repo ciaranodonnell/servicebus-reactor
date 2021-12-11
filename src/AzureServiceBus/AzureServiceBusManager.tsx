@@ -1,8 +1,8 @@
 import * as asb from "@azure/service-bus"
 import { Queue } from "./Queue";
 import { Topic } from "./Topic";
-
-export { Queue, Topic }
+import { ReceivedMessage } from "./ReceivedMessage";
+export { Queue, Topic, ReceivedMessage }
 
 export class AzureServiceBusManager {
     private _connectionString: string;
