@@ -46,7 +46,7 @@ export class AzureServiceBusManager {
 
             while (itResult.done === false) {
                 console.log(itResult.value);
-                this.queues.push(new Queue(itResult.value, this.mgt));
+                this.queues.push(new Queue(itResult.value, this.mgt, this.sb));
                 itResult = await queues.next();
             }
         }
