@@ -20,3 +20,31 @@ export function ifBooleanThenYesNoOtherwiseValue(value: any): any {
         return value;
     }
 }
+
+export function convertTimespanToString(value: string | undefined): string {
+    console.log("convertTimespanToString: ", value);
+    if (value === undefined) return "";
+    var tokens = value.split(/[A-Z]+/);
+
+    const formatPart = (part: string): string => parseFloat(part).toLocaleString('en');
+    const getPart = (part: string, name: string, isEnd?: boolean): string => {
+        if (part === "") return "";
+        if (part === "0") return "";
+        if (isEnd === undefined) isEnd = false;
+
+
+        return `${formatPart(part)} ${name}${part == "1" ? "" : "s"}${!isEnd ? ", " : ""}`;
+    }
+    let days = tokens[1];
+    let hours = tokens[2];
+    let minutes = tokens[3];
+    let seconds = tokens[4];
+    let daysAsNumber = parseInt(days);
+    let years = daysAsNumber / 365;
+    if (years > 1) {
+        years = Math.floor(years);
+        days = (daysAsNumber - (years * 365)).toString();
+    }
+
+    return `${getPart(years.toString(), "year")}${getPart(days, "day")}${getPart(tokens[2], "hour")}${getPart(tokens[3], "minute")}${getPart(tokens[4], "second", true)}`;
+}

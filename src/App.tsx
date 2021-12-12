@@ -1,3 +1,4 @@
+import { Box } from '@mui/system';
 import React from 'react';
 import { useEffect } from 'react';
 
@@ -28,10 +29,14 @@ function App() {
 
 
   return (
-    <>
-      <ConnectionBox connectionString={""} handleConnect={handleConnect} />
-      {serviceBus !== undefined && <ServiceBusDetails serviceBus={serviceBus} key={serviceBus?.connectionString} />}
-    </>
+    <div className={"wholeAppFlex"}>
+      <div className="appHeader">
+        <ConnectionBox connectionString={""} handleConnect={handleConnect} />
+      </div>
+      <div className="appBody">
+        {serviceBus !== undefined && <ServiceBusDetails serviceBus={serviceBus} key={serviceBus?.connectionString} />}
+      </div>
+    </div>
   );
 
 }

@@ -11,6 +11,7 @@ import { TabControl, TabPanel } from './TabPanel';
 import { SubscriptionList } from './SubscriptionList';
 
 import './ServiceBusDetails.css';
+import { Box } from '@mui/system';
 
 export interface ServiceBusProps {
     serviceBus: AzureServiceBusManager;
@@ -29,10 +30,8 @@ export function ServiceBusDetails(props: ServiceBusProps) {
     }
 
     return (
-        <Grid container columnGap={2} style={{
-            'width': '100%', minWidth: '1300px', overflow: 'auto', height: '100%'
-        }} >
-            <Grid item xs={3} className={"queueOrTopicLists"} >
+        <Box className={"serviceBusDetailsBox"}>
+            <Box className={"queueOrTopicLists"} >
                 <TabControl tabGroupName={"queuesOrTopics"}>
                     <TabPanel title={"Queues"} >
                         <QueueList serviceBus={props.serviceBus} newQueueSelected={newQueueSelected} />
@@ -41,15 +40,15 @@ export function ServiceBusDetails(props: ServiceBusProps) {
                         <TopicList serviceBus={props.serviceBus} newTopicSelected={newTopicSelected} />
                     </TabPanel>
                 </TabControl>
-            </Grid>
-            <Grid item xs={8} lg={8} className="queueOrSubscriptionExplorer">
+            </Box>
+            <Box className="queueOrSubscriptionExplorer">
                 {selectedItem === undefined ? (<></>) :
                     selectedItem instanceof Queue ? (
                         <QueueExplorer queue={selectedItem} key={selectedItem.name} />
                     ) : (
                         <SubscriptionList serviceBus={props.serviceBus} />
                     )}
-            </Grid>
-        </Grid>
+            </Box>
+        </Box>
     );
 }
