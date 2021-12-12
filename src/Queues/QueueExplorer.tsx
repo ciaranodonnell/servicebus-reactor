@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { formatBytesForPresentation, ifBooleanThenYesNoOtherwiseValue } from "../AppUtils";
+import { formatBytesForPresentation, ifBooleanThenYesNoOtherwiseValue, convertTimespanToString } from "../AppUtils";
 
 import './QueueExplorer.css';
 import { Queue, ReceivedMessage } from "../AzureServiceBus/AzureServiceBusManager";
@@ -53,16 +53,13 @@ function getValueOrLoading(value: string | number | undefined): string | number 
 
 export function QueueExplorer(props: QueueExplorerProps) {
 
-    console.log("QueueExplorer rendering");
-
     const queue = props.queue;
 
     const [runtimeStateLoaded, setRuntimeStateLoaded] = React.useState<any>(false);
     const [messageList, setMessageList] = React.useState(new PeekMessagesList());
 
 
-
-
+    // Load the runtime state for the queue and then update the UI
     useEffect(() => {
         setRuntimeStateLoaded(false);
         queue.loadRuntimeValues().then(() => {
@@ -103,7 +100,7 @@ export function QueueExplorer(props: QueueExplorerProps) {
                             {GetValueSpan("Maximum Delivery Count", queue.maxDeliveryCount)}
                             {GetValueSpan("Forward To", queue.properties.forwardTo)}
                             {GetValueSpan("Forward DL To", queue.properties.forwardDeadLetteredMessagesTo)}
-                            {GetValueSpan("Auto Delete on Idle", queue.properties.autoDeleteOnIdle)}
+                            {GetValueSpan("Auto Delete on Idle", convertTimespanToString(queue.properties.autoDeleteOnIdle))}
                             {GetValueSpan("Requires Sessions", ifBooleanThenYesNoOtherwiseValue(queue.requiresSession))}
                         </Grid>
                     </Box>
@@ -127,8 +124,9 @@ export function QueueExplorer(props: QueueExplorerProps) {
             <TabPanel key={queue.name + "-properties-tab"} title="Messages">
                 <div className="messagesTabPanelDiv">
                     <h2>Messages</h2>
-                    <Box className="messagesBox" >
+                    <Box className="messagesBox"  >
                         <Button
+                            variant="contained"
                             onClick={() => doPeekMessages(queue)}
                         >Peek Messages</Button>
                         <MessageList didError={messageList.didError} isLoaded={messageList.isLoaded}
