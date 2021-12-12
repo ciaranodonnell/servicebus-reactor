@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { DataGrid, GridColDef, GridRowsProp, GridValueGetterSimpleParams } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridRowParams, GridRowsProp, GridValueGetterSimpleParams, MuiEvent } from '@mui/x-data-grid';
 import { ReceivedMessage } from "../AzureServiceBus/ReceivedMessage";
 import { Queue } from "../AzureServiceBus/Queue";
 
@@ -15,43 +15,43 @@ interface MessageListProps {
 export function MessageList(props: MessageListProps) {
     const { isLoaded, /*messages,*/ didError, errorMessage, queue } = props;
 
+    const [isSelecting, setIsSelecting] = React.useState(false);
+
     function getGridColumns(): GridColDef[] {
+
+        const commonProps = { resizable: true, sortable: true, filter: true, width: 200, editable: false };
+
         const columns: GridColDef[] = [
-            { field: 'id', headerName: 'Message ID', width: 90 },
+            {
+                field: 'id', headerName: 'Message ID',
+                description: 'The unique identifier for the message.',
+                ...commonProps,
+            },
             {
                 field: 'sequenceNumber',
-                headerName: 'Seq',
-                width: 100,
-                editable: false,
-                resizable: true,
+                headerName: 'Seq', description: 'The sequence number of the message within the queue',
+                ...commonProps
             },
             {
                 field: 'to',
                 headerName: 'To',
-                width: 100,
-                editable: false,
-                resizable: true,
+                description: 'The To property in the message when it was sent. This has to be set by the sender and can be used by subscription filters.',
+                ...commonProps
             },
             {
                 field: 'enqueuedTimeUtc',
                 headerName: 'Enqueued UTC',
-                width: 110,
-                editable: false,
-                resizable: true,
+                ...commonProps
             },
             {
                 field: 'scheduledEnqueuedTimeUtc',
                 headerName: 'Scheduled Enqueued UTC',
-                width: 110,
-                editable: false,
-                resizable: true,
+                ...commonProps
             },
             {
                 field: 'body',
                 headerName: 'body',
-                width: 110,
-                editable: false,
-                resizable: true,
+                ...commonProps,
                 valueGetter: (params: GridValueGetterSimpleParams<ReceivedMessage>) => {
                     const body = params.row.body ?? "";
                     return body.length > 100 ? body.substr(0, 100) + "..." : body;
@@ -59,16 +59,13 @@ export function MessageList(props: MessageListProps) {
             },
             {
                 field: 'deliveryCount',
-                headerName: 'Delivery Count',
-                width: 110,
-                editable: false,
-                resizable: true,
+                headerName: 'Delivery Count', description: 'The number of times the message has been delivered to a subscriber.',
+                ...commonProps
             },
             {
                 field: 'isScheduled',
-                headerName: 'Scheduled',
-                width: 110,
-                editable: false,
+                headerName: 'Scheduled', description: 'Indicates whether the message is scheduled to be sent.',
+                ...commonProps,
             },
         ];
         return columns;
@@ -82,12 +79,19 @@ export function MessageList(props: MessageListProps) {
         return results;
     }
 
+    function messageDoubleClicked(params: GridRowParams<{ [key: string]: any; }>, event: MuiEvent<React.MouseEvent<HTMLElement, MouseEvent>>, details: GridCallbackDetails) {
+        alert(`messageDoubleClicked ${params.row.messageId}`);
+    }
+
     const gridData = getGridData();
     const gridColumns = getGridColumns();
     console.log("MessageList Rendering", gridData, gridColumns, isLoaded);
+
+
     if (isLoaded)
-        return (<div style={{ height: '500px' }}>
-            <DataGrid
+        return (<div className="messagesListDiv">
+            <DataGrid checkboxSelection={isSelecting}
+                onRowDoubleClick={(params, event, details) => { messageDoubleClicked(params, event, details); }}
                 columns={gridColumns}
                 rows={gridData}
             ></DataGrid>

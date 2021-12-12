@@ -10,7 +10,6 @@
     margin: 5px;
 }
 
-.ConnectionStringBox{
-    min-width: 400px;
-    width: 70%;
+.ConnectionStringBox input{
+    color:white !important;
 }

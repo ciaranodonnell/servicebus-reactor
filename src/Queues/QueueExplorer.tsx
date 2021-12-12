@@ -96,7 +96,7 @@ export function QueueExplorer(props: QueueExplorerProps) {
         <h1>Queue: <span className="queueName">{queue.name}</span></h1>
         <TabControl onChange={(newIndex) => { }} tabGroupName={"queueExplorer"}       >
             <TabPanel key={queue.name + "-properties-tab"} title={"Properties"} >
-                <div>
+                <div className="queuePropertiesTabPanelDiv">
                     <Box>
                         <h2>Queue Properties</h2>
                         <Grid container spacing={2}>
@@ -125,9 +125,9 @@ export function QueueExplorer(props: QueueExplorerProps) {
                 </div>
             </TabPanel>
             <TabPanel key={queue.name + "-properties-tab"} title="Messages">
-                <div>
+                <div className="messagesTabPanelDiv">
                     <h2>Messages</h2>
-                    <Box >
+                    <Box className="messagesBox" >
                         <Button
                             onClick={() => doPeekMessages(queue)}
                         >Peek Messages</Button>
