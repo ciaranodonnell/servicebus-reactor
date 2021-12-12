@@ -1,0 +1,11 @@
+.queueOrTopicLists
+{
+ overflow: auto;
+  max-width: 400px;
+  min-width: 350px;
+}
+
+.queueOrSubscriptionExplorer{
+  width: 100%;
+  height: 100%;
+}
