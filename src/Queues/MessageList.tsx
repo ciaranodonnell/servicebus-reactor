@@ -9,7 +9,7 @@ interface MessageListProps {
     isLoaded: boolean;
     didError: boolean;
     errorMessage?: string;
-    queue: Queue;
+    queue: { lastReceivedMessages: ReceivedMessage[] };
 }
 
 export function MessageList(props: MessageListProps) {

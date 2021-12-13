@@ -1,10 +1,11 @@
 import * as asb from "@azure/service-bus";
 import { Queue } from "./Queue";
 import { Topic } from "./Topic";
+import { Subscription } from "./Subscription";
 
 export class ReceivedMessage {
     private receiveMode: string;
-    private receviedFrom: Queue | Topic;
+    private receviedFrom: Queue | Subscription;
     body: string | undefined;
     deliveryCount: number | undefined;
     enqueuedTimeUtc: Date | undefined;
@@ -16,7 +17,7 @@ export class ReceivedMessage {
     timeToLive: number | undefined;
     to: string | undefined;
 
-    constructor(recieveMode: string, receivedFrom: Queue | Topic, message: asb.ServiceBusReceivedMessage | undefined) {
+    constructor(recieveMode: string, receivedFrom: Queue | Subscription, message: asb.ServiceBusReceivedMessage | undefined) {
         this.receiveMode = recieveMode;
         this.receviedFrom = receivedFrom;
         this.body = message?.body;
