@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import './QueueTopicList.css';
+import './TopicList.css';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -7,8 +7,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ListItemText from '@mui/material/ListItemText';
 
-import { AzureServiceBusManager } from './AzureServiceBus/AzureServiceBusManager';
-import { Topic } from "./AzureServiceBus/Topic";
+import { AzureServiceBusManager } from '../AzureServiceBus/AzureServiceBusManager';
+import { Topic } from "../AzureServiceBus/Topic";
 
 interface TopicListProps {
     serviceBus: AzureServiceBusManager | undefined;
@@ -46,7 +46,6 @@ function TopicList(props: TopicListProps) {
             <></>
         );
     } else {
-        console.log("TopicList", "data.isLoading", data.isLoading);
         return (
             <div className="topicListContainer">
                 <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }} component="nav">

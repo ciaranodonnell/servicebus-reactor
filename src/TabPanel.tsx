@@ -17,22 +17,22 @@ class TabPanel extends React.Component<TabProps> {
 }
 
 function TabControl(props: TabControlProps): JSX.Element {
-    let tabs: TabPanel[] = [];
     const tabGroupName = props.tabGroupName;
+    const { onChange, ...other } = props;
+    const [selectedTab, setSelectedTab] = React.useState(0);
+
+    let tabs: TabPanel[] = [];
 
     React.Children.map(props.children, (child: React.ReactNode) => {
 
         if ((child as any).type.name == "TabPanel") {
-            console.log("mapped a tab child");
             tabs.push(child as TabPanel);
         } else {
-            console.log("skipped a child", child instanceof TabPanel);
-            console.log(child)
+            //       console.log("skipped a child", child instanceof TabPanel);
+            //     console.log(child)
         }
     });
 
-    const { onChange, ...other } = props;
-    const [selectedTab, setSelectedTab] = React.useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setSelectedTab(newValue);
@@ -47,7 +47,7 @@ function TabControl(props: TabControlProps): JSX.Element {
     function writeTabsPanels(child: TabPanel, index: number) {
         const isSelected = selectedTab == index;
         const divId = `simple-tabpanel-${index}`;
-        console.log("writing tab panel", index, child, "isSelected", isSelected);
+        // console.log("writing tab panel", index, child, "isSelected", isSelected);
         return (
             <div
                 role="tabpanel"
@@ -67,14 +67,14 @@ function TabControl(props: TabControlProps): JSX.Element {
         );
     }
 
-    console.log("Tab Count", tabs.length);
-    console.log("Selected Tab", selectedTab);
+    //  console.log("Tab Count", tabs.length);
+    //  console.log("Selected Tab", selectedTab);
     return (
 
         <Box className="thisIsTheBox" {...other}>
             <Tabs value={selectedTab} onChange={handleChange} variant="fullWidth" >
                 {tabs.map((child, index) => {
-                    console.log("Tab", child.props.title, index);
+                    //  console.log("Tab", child.props.title, index);
                     return (<Tab key={index} {...a11yProps(index)} label={child.props.title} />);
                 })}
             </Tabs>
