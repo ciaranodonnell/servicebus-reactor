@@ -48,3 +48,11 @@ export function convertTimespanToString(value: string | undefined): string {
 
     return `${getPart(years.toString(), "year")}${getPart(days, "day")}${getPart(tokens[2], "hour")}${getPart(tokens[3], "minute")}${getPart(tokens[4], "second", true)}`;
 }
+
+export interface LoadingData<T> {
+    data?: T;
+    hasLoaded: boolean;
+    isLoading: boolean;
+    didError: boolean;
+    errorMessage?: string;
+}
