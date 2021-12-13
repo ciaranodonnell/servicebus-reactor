@@ -3,12 +3,12 @@ import React from 'react';
 import { AzureServiceBusManager, Queue, Topic } from './AzureServiceBus/AzureServiceBusManager';
 
 import { QueueExplorer } from './Queues/QueueExplorer';
-import TopicList from './TopicList';
+import TopicList from './Topics/TopicList';
 import QueueList from './Queues/QueueList';
 
 import Grid from '@mui/material/Grid';
 import { TabControl, TabPanel } from './TabPanel';
-import { SubscriptionList } from './SubscriptionList';
+import { TopicExplorer } from './Topics/TopicExplorer';
 
 import './ServiceBusDetails.css';
 import { Box } from '@mui/system';
@@ -28,7 +28,7 @@ export function ServiceBusDetails(props: ServiceBusProps) {
     function newTopicSelected(topic: Topic) {
         setSelectedItem(topic);
     }
-
+    console.log("selectedItem instanceof Topic", selectedItem instanceof Topic);
     return (
         <Box className={"serviceBusDetailsBox"}>
             <Box className={"queueOrTopicLists"} >
@@ -44,9 +44,9 @@ export function ServiceBusDetails(props: ServiceBusProps) {
             <Box className="queueOrSubscriptionExplorer">
                 {selectedItem === undefined ? (<></>) :
                     selectedItem instanceof Queue ? (
-                        <QueueExplorer queue={selectedItem} key={selectedItem.name} />
+                        <QueueExplorer queue={selectedItem} key={"q-" + selectedItem.name} />
                     ) : (
-                        <SubscriptionList serviceBus={props.serviceBus} />
+                        <TopicExplorer topic={selectedItem as Topic} key={"t-" + selectedItem.name} />
                     )}
             </Box>
         </Box>
