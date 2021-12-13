@@ -11,6 +11,7 @@ import { Button } from "@mui/material";
 
 import { TabControl, TabPanel } from "../TabPanel";
 import { MessageList } from "./MessageList";
+import { MessageList2 } from "./MessageList2";
 
 export interface QueueExplorerProps {
     queue: Queue;
