@@ -118,6 +118,20 @@ export function SubscriptionExplorer(props: SubscriptionExplorerProps) {
         });
     }
 
+    function ActiveMessageDetails(props: { subscription: Subscription }) {
+        return (<
+            Grid container spacing={2}>
+            {GetValueSpan("Total Messages", getValueOrLoading(subscription.totalMessageCount))}
+
+            {GetValueSpan("Active Messages", getValueOrLoading(subscription.activeMessageCount))}
+            {GetValueSpan("Dead Lettered Messages", getValueOrLoading(subscription.deadLetterMessageCount))}
+
+            {GetValueSpan("Transfer Messages", getValueOrLoading(subscription.transferMessageCount))}
+            {GetValueSpan("Dead Transfer Messages", getValueOrLoading(subscription.transferDeadLetterMessageCount))}
+
+        </Grid>);
+    }
+
     return (<div className="subscriptionExplorer">
         <h1>Subscription: <span className="subscriptionName">{subscription.name}</span></h1>
         <TabControl onChange={(newIndex) => { }} tabGroupName={"subscriptionExplorer"}       >
@@ -135,21 +149,13 @@ export function SubscriptionExplorer(props: SubscriptionExplorerProps) {
                     </Box>
                     <Box>
                         <h2>Runtime Properties</h2>
-                        <Grid container spacing={2}>
-                            {GetValueSpan("Total Messages", getValueOrLoading(subscription.totalMessageCount))}
-
-                            {GetValueSpan("Active Messages", getValueOrLoading(subscription.activeMessageCount))}
-                            {GetValueSpan("Dead Lettered Messages", getValueOrLoading(subscription.deadLetterMessageCount))}
-
-                            {GetValueSpan("Transfer Messages", getValueOrLoading(subscription.transferMessageCount))}
-                            {GetValueSpan("Dead Transfer Messages", getValueOrLoading(subscription.transferDeadLetterMessageCount))}
-
-                        </Grid>
+                        <ActiveMessageDetails subscription={subscription} />
                     </Box>
 
                 </div>
             </TabPanel>
             <TabPanel key={subscription.name + "-properties-tab"} title="Messages">
+                <ActiveMessageDetails subscription={subscription} />
                 <div className="messagesTabPanelDiv">
                     <h2>Messages</h2>
                     <Box className="messagesBox"  >

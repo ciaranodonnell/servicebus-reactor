@@ -37,23 +37,35 @@ export function SubscriptionList(props: SubscriptionListProps) {
         })
     }, [topic]);
 
+    const subscriptionSelected = (item: Subscription) => {
+        setSelectedSName(item.name);
+        if (newSubscriptionSelected != undefined) {
+            newSubscriptionSelected(item);
+        }
+    }
+
+
+
     return (
         <div className="subscriptions">
             <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }} component="nav">
+                <h2>Subscriptions 👇</h2>
                 {data.isLoading ? "Loading Subscriptions..." :
                     data.didError ? <div>Error: {data.errorMessage}</div> :
                         (
                             <List>
                                 {
                                     data.data!.map((item) => {
+                                        const isSelected = item.name === selectedSName;
+                                        console.log("SubscriptionList: item.name, selectedSName, isselected>", item.name, selectedSName, isSelected);
                                         return (
                                             <ListItemButton
-                                                selected={item.name == selectedSName}
+                                                selected={isSelected}
                                                 key={item.name}
-                                                onClick={() => { if (newSubscriptionSelected !== undefined) newSubscriptionSelected(item); }}
+                                                onClick={() => subscriptionSelected(item)}
                                             >
                                                 <ListItemText primary={item.name} />
-                                                <ArrowForwardIosIcon color={item.name == selectedSName ? "primary" : "disabled"} />
+                                                <ArrowForwardIosIcon color={isSelected ? "primary" : "disabled"} />
                                             </ListItemButton>
                                         );
                                     })}
