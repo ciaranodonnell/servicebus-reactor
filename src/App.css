@@ -13,4 +13,22 @@
 .wholeAppFlex .appBody {
   flex: 1 1 auto;
    display:flex;
+   margin-top: 10px;
+}
+
+.leftRightContainer
+{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.leftRightContainer .left
+{
+
+}
+
+.leftRightContainer .right
+{
+
 }
