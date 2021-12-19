@@ -15,6 +15,13 @@
    display:flex;
    margin-top: 10px;
 }
+.wholeAppFlex .statusBar{
+  flex: 0 1 auto;
+  min-height: 2em;
+
+   display:flex;
+   margin-top: 10px;
+}
 
 .leftRightContainer
 {
@@ -25,10 +32,14 @@
 
 .leftRightContainer .left
 {
-
+margin-right:10px;
 }
 
 .leftRightContainer .right
 {
 
+}
+
+.actionButton{
+  margin : 5px;
 }

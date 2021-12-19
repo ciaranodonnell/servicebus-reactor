@@ -4,13 +4,15 @@ import { Topic, Subscription } from "../AzureServiceBus/AzureServiceBusManager";
 import { SubscriptionList } from "./SubscriptionList";
 import { SubscriptionExplorer } from "./SubscriptionExplorer";
 import { TopicDetails } from './TopicDetails';
+import { InProgressActivityReport } from '../InProgressTaskReport';
 
 interface TopicExplorerProps {
     topic: Topic;
+    reportActivity: (report: InProgressActivityReport) => void;
 }
 
 export function TopicExplorer(props: TopicExplorerProps) {
-    const { topic } = props;
+    const { topic, reportActivity } = props;
 
     const [subscription, setSubscription] = React.useState<Subscription | undefined>();
 
@@ -21,7 +23,7 @@ export function TopicExplorer(props: TopicExplorerProps) {
     return (
         <>
             <div>
-                <TopicDetails topic={topic} />
+                <TopicDetails  {...props} />
             </div>
             <div className="leftRightContainer">
                 <div className="left" style={{ minWidth: '300px' }}>
@@ -29,7 +31,7 @@ export function TopicExplorer(props: TopicExplorerProps) {
                 </div>
                 <div className="right">
                     {(subscription instanceof Subscription) ?
-                        (<SubscriptionExplorer subscription={subscription} />)
+                        (<SubscriptionExplorer subscription={subscription} reportActivity={props.reportActivity} />)
                         : <></>
 
                     }
