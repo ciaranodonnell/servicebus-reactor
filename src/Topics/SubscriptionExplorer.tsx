@@ -3,6 +3,8 @@ import React, { useEffect } from "react";
 import { formatBytesForPresentation, ifBooleanThenYesNoOtherwiseValue, convertTimespanToString } from "../AppUtils";
 
 import './TopicList.css';
+import '../App.css';
+
 import { Subscription, ReceivedMessage } from "../AzureServiceBus/AzureServiceBusManager";
 
 import Grid from '@mui/material/Grid';
@@ -11,9 +13,11 @@ import { Button } from "@mui/material";
 
 import { TabControl, TabPanel } from "../TabPanel";
 import { MessageList } from "../Queues/MessageList";
+import { InProgressActivityReport } from "../InProgressTaskReport";
 
 export interface SubscriptionExplorerProps {
     subscription: Subscription;
+    reportActivity?: (report: InProgressActivityReport) => void;
 }
 
 class PeekMessagesList {
@@ -49,15 +53,64 @@ function getValueOrLoading(value: string | number | undefined): string | number 
 
 
 
+function ActiveMessageDetails(props: { subscription: Subscription }) {
+    const subscription = props.subscription;
+    return (<
+        Grid container spacing={2}>
+        {GetValueSpan("Total Messages", getValueOrLoading(subscription.totalMessageCount))}
 
+        {GetValueSpan("Active Messages", getValueOrLoading(subscription.activeMessageCount))}
+        {GetValueSpan("Dead Lettered Messages", getValueOrLoading(subscription.deadLetterMessageCount))}
+
+        {GetValueSpan("Transfer Messages", getValueOrLoading(subscription.transferMessageCount))}
+        {GetValueSpan("Dead Transfer Messages", getValueOrLoading(subscription.transferDeadLetterMessageCount))}
+
+    </Grid>);
+}
+
+
+
+
+function MessageTaskButtons(props: { subscription: Subscription, reportActivity: (report: InProgressActivityReport) => void }) {
+    const subscription = props.subscription;
+    const reportActivity = props.reportActivity;
+    function sendDLQBackToTopic() {
+        subscription.sendDLQBackToTopic(
+            (done, of) => reportActivity(new InProgressActivityReport("subSendDLQBack", `Sending DQL back to Topic ${subscription.topicName}`,
+                "inProgress", done, of))
+        ).then(() => {
+            console.log("Sent DLQ messages back to topic");
+            reportActivity(new InProgressActivityReport("subSendDLQBack", `Sending DQL back to Topic ${subscription.topicName}`,
+                "completed", 0, 0));
+        }).catch(err => {
+            console.log("Sent DLQ messages back to topic err:" + err);
+            reportActivity(new InProgressActivityReport("subSendDLQBack", `Sending DQL back to Topic ${subscription.topicName}`,
+                "failed", 0, 0));
+        });
+    }
+
+    return (<div><Button className={"actionButton"}
+        variant="contained"
+        onClick={() => sendDLQBackToTopic()}
+    >Resend all DLQ</Button>
+    </div >);
+}
 
 export function SubscriptionExplorer(props: SubscriptionExplorerProps) {
 
     const subscription = props.subscription;
-
+    const outerReportActivity = props.reportActivity;
     const [runtimeStateLoaded, setRuntimeStateLoaded] = React.useState<any>(false);
     const [messageList, setMessageList] = React.useState(new PeekMessagesList());
     const [doingOperation, setDoingOperation] = React.useState({ isDoing: false, done: 0, of: 0 });
+
+
+    function reportActivity(report: InProgressActivityReport) {
+
+        setDoingOperation({ isDoing: report.state == "inProgress", done: report.done, of: report.total });
+
+        if (outerReportActivity !== undefined) outerReportActivity(report);
+    }
 
     // Load the runtime state for the subscription and then update the UI
     useEffect(() => {
@@ -93,13 +146,13 @@ export function SubscriptionExplorer(props: SubscriptionExplorerProps) {
         list.isLoading = true;
         setMessageList(list);
 
+        reportActivity(new InProgressActivityReport("peekDLQ", `Peeking the DLQ for Subscription '${subscription.name}'`, "inProgress", 0, 0));
         subscription.peekDLQ(10).then(messages => {
-            console.log("Peeked DLQ messages: " + messages.length);
+            reportActivity(new InProgressActivityReport("peekDLQ", `Peeking the DLQ for Subscription '${subscription.name}'`, "completed", 0, 0));
         }).catch(err => {
-            console.log("Peeked DLQ messages err:" + err);
+            reportActivity(new InProgressActivityReport("peekDLQ", `Peeking the DLQ for Subscription '${subscription.name}'`, "failed", 0, 0));
             list.didError = true;
         }).finally(() => {
-            console.log("Peeked DLQ messages finally");
             const newList: PeekMessagesList = { isLoaded: true, isLoading: false, didError: list.didError };
             setMessageList(newList);
         });
@@ -107,30 +160,6 @@ export function SubscriptionExplorer(props: SubscriptionExplorerProps) {
         return list;
     }
 
-    function sendDLQBackToTopic() {
-        subscription.sendDLQBackToTopic(
-            (done, of) => setDoingOperation({ isDoing: true, done: done, of: of })
-        ).then(() => {
-            console.log("Sent DLQ messages back to topic");
-            setDoingOperation({ isDoing: false, done: 0, of: 0 })
-        }).catch(err => {
-            console.log("Sent DLQ messages back to topic err:" + err);
-        });
-    }
-
-    function ActiveMessageDetails(props: { subscription: Subscription }) {
-        return (<
-            Grid container spacing={2}>
-            {GetValueSpan("Total Messages", getValueOrLoading(subscription.totalMessageCount))}
-
-            {GetValueSpan("Active Messages", getValueOrLoading(subscription.activeMessageCount))}
-            {GetValueSpan("Dead Lettered Messages", getValueOrLoading(subscription.deadLetterMessageCount))}
-
-            {GetValueSpan("Transfer Messages", getValueOrLoading(subscription.transferMessageCount))}
-            {GetValueSpan("Dead Transfer Messages", getValueOrLoading(subscription.transferDeadLetterMessageCount))}
-
-        </Grid>);
-    }
 
     return (<div className="subscriptionExplorer">
         <h1>Subscription: <span className="subscriptionName">{subscription.name}</span></h1>
@@ -168,10 +197,7 @@ export function SubscriptionExplorer(props: SubscriptionExplorerProps) {
                             onClick={() => doPeekDLQ(subscription)}
                         >Peek DLQ</Button>
 
-                        <Button
-                            variant="contained"
-                            onClick={() => sendDLQBackToTopic()}
-                        >Resend all DLQ</Button>
+                        <MessageTaskButtons subscription={subscription} reportActivity={reportActivity} />
                         <MessageList
                             didError={messageList.didError}
                             isLoaded={messageList.isLoaded}

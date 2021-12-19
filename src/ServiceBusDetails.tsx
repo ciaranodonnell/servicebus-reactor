@@ -12,13 +12,15 @@ import { TopicExplorer } from './Topics/TopicExplorer';
 
 import './ServiceBusDetails.css';
 import { Box } from '@mui/system';
+import { InProgressActivityReport } from './InProgressTaskReport';
 
 export interface ServiceBusProps {
     serviceBus: AzureServiceBusManager;
+    reportActivity: (report: InProgressActivityReport) => void;
 }
 
 export function ServiceBusDetails(props: ServiceBusProps) {
-
+    const { reportActivity } = props;
     const [selectedItem, setSelectedItem] = React.useState<Queue | Topic | undefined>();
 
     function newQueueSelected(queue: Queue) {
@@ -46,7 +48,7 @@ export function ServiceBusDetails(props: ServiceBusProps) {
                     selectedItem instanceof Queue ? (
                         <QueueExplorer queue={selectedItem} key={"q-" + selectedItem.name} />
                     ) : (
-                        <TopicExplorer topic={selectedItem as Topic} key={"t-" + selectedItem.name} />
+                        <TopicExplorer topic={selectedItem as Topic} key={"t-" + selectedItem.name} reportActivity={reportActivity} />
                     )}
             </Box>
         </Box>
