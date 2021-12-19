@@ -93,7 +93,7 @@ export class Subscription {
 
         let done = 0;
         let of = this.deadLetterMessageCount ?? 0;
-        const reportEvery = Math.min(Math.floor(of / 10), 10);
+        const reportEvery = Math.min(Math.max(Math.floor(of / 10), 1), 10);
 
         while ((messages = await receiver.receiveMessages(1)).length > 0 && done < of) {
 
@@ -103,6 +103,7 @@ export class Subscription {
             await receiver.completeMessage(messages[0]);
 
             done += 1;
+            //console.log("done % reportEvery === 0 ===>", `${done} % ${reportEvery} === 0`, done % reportEvery === 0)
             if (done % reportEvery === 0) {
                 updateProgress(done, of);
             }

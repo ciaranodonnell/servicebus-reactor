@@ -5,7 +5,7 @@ import { formatBytesForPresentation, ifBooleanThenYesNoOtherwiseValue, convertTi
 import './TopicList.css';
 import '../App.css';
 
-import { Subscription, ReceivedMessage } from "../AzureServiceBus/AzureServiceBusManager";
+import { Subscription } from "../AzureServiceBus/AzureServiceBusManager";
 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -13,11 +13,11 @@ import { Button } from "@mui/material";
 
 import { TabControl, TabPanel } from "../TabPanel";
 import { MessageList } from "../Queues/MessageList";
-import { InProgressActivityReport } from "../InProgressTaskReport";
 
-export interface SubscriptionExplorerProps {
+import { InProgressActivityReport, ApplicationProps } from "../ApplicationHooks";
+
+export interface SubscriptionExplorerProps extends ApplicationProps {
     subscription: Subscription;
-    reportActivity?: (report: InProgressActivityReport) => void;
 }
 
 class PeekMessagesList {
@@ -76,8 +76,11 @@ function MessageTaskButtons(props: { subscription: Subscription, reportActivity:
     const reportActivity = props.reportActivity;
     function sendDLQBackToTopic() {
         subscription.sendDLQBackToTopic(
-            (done, of) => reportActivity(new InProgressActivityReport("subSendDLQBack", `Sending DQL back to Topic ${subscription.topicName}`,
-                "inProgress", done, of))
+            (done, of) => {
+                reportActivity(new InProgressActivityReport("subSendDLQBack", `Sending DQL back to Topic ${subscription.topicName}`,
+                    "inProgress", done, of));
+                console.log("sendDLQBackToTopic done some");
+            }
         ).then(() => {
             console.log("Sent DLQ messages back to topic");
             reportActivity(new InProgressActivityReport("subSendDLQBack", `Sending DQL back to Topic ${subscription.topicName}`,
@@ -99,7 +102,7 @@ function MessageTaskButtons(props: { subscription: Subscription, reportActivity:
 export function SubscriptionExplorer(props: SubscriptionExplorerProps) {
 
     const subscription = props.subscription;
-    const outerReportActivity = props.reportActivity;
+    const outerReportActivity = props.hooks.reportActivity;
     const [runtimeStateLoaded, setRuntimeStateLoaded] = React.useState<any>(false);
     const [messageList, setMessageList] = React.useState(new PeekMessagesList());
     const [doingOperation, setDoingOperation] = React.useState({ isDoing: false, done: 0, of: 0 });
