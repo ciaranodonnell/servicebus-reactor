@@ -9,6 +9,7 @@ import * as sbm from './AzureServiceBus/AzureServiceBusManager';
 import ConnectionBox from './ConnectionBox';
 import { InProgressActivityReport } from './InProgressTaskReport';
 import { ServiceBusDetails } from './ServiceBusDetails';
+import { StatusBar } from './StatusBar';
 
 function App() {
 
@@ -20,12 +21,6 @@ function App() {
     document.title = `ServiceBus-Reactor ${namespace === undefined || namespace.length == 0 ? "" : " - " + namespace}`
   }, [serviceBus]);
 
-  function reportActivity(report: InProgressActivityReport) {
-    setLastActivityStatus(report);
-    if (report.state == "completed") {
-      setTimeout(() => setLastActivityStatus(undefined), 5000);
-    }
-  }
 
   const handleConnect = (conString: string) => {
     console.log("Connecting to:", conString);
@@ -35,6 +30,15 @@ function App() {
     }
   };
 
+  function reportActivity(report: InProgressActivityReport) {
+    setLastActivityStatus(report);
+    console.log("Activity reported:", report.description, report.done, report.total);
+    if (report.state == "completed") {
+      setTimeout(() => setLastActivityStatus(undefined), 5000);
+    }
+  }
+
+  const appHooks = { reportActivity: reportActivity };
 
   return (
     <div className={"wholeAppFlex"}>
@@ -42,21 +46,9 @@ function App() {
         <ConnectionBox connectionString={""} handleConnect={handleConnect} />
       </div>
       <div className="appBody">
-        {serviceBus !== undefined && <ServiceBusDetails serviceBus={serviceBus} key={serviceBus?.connectionString} reportActivity={reportActivity} />}
+        {serviceBus !== undefined && <ServiceBusDetails serviceBus={serviceBus} key={serviceBus?.connectionString} hooks={appHooks} />}
       </div>
-      <div className="statusBar">
-        {(lastActivityStatus !== undefined) ?
-          (
-            <>
-              <span className="statusBarText">{lastActivityStatus.description}</span>
-              {lastActivityStatus !== undefined && lastActivityStatus.total > 0 ?
-                (<span className="statusBarPercent">{((lastActivityStatus.done / lastActivityStatus.total) * 100)} %</span>)
-                : (<></>)}
-            </>)
-          :
-          (<></>)
-        }
-      </div>
+      <StatusBar statusReport={lastActivityStatus} />
     </div>
   );
 

@@ -13,14 +13,14 @@ import { TopicExplorer } from './Topics/TopicExplorer';
 import './ServiceBusDetails.css';
 import { Box } from '@mui/system';
 import { InProgressActivityReport } from './InProgressTaskReport';
+import { ApplicationHooks, ApplicationProps } from './ApplicationHooks';
 
-export interface ServiceBusProps {
+export interface ServiceBusProps extends ApplicationProps {
     serviceBus: AzureServiceBusManager;
-    reportActivity: (report: InProgressActivityReport) => void;
 }
 
 export function ServiceBusDetails(props: ServiceBusProps) {
-    const { reportActivity } = props;
+    const { reportActivity } = props.hooks;
     const [selectedItem, setSelectedItem] = React.useState<Queue | Topic | undefined>();
 
     function newQueueSelected(queue: Queue) {
@@ -48,7 +48,7 @@ export function ServiceBusDetails(props: ServiceBusProps) {
                     selectedItem instanceof Queue ? (
                         <QueueExplorer queue={selectedItem} key={"q-" + selectedItem.name} />
                     ) : (
-                        <TopicExplorer topic={selectedItem as Topic} key={"t-" + selectedItem.name} reportActivity={reportActivity} />
+                        <TopicExplorer topic={selectedItem as Topic} key={"t-" + selectedItem.name} hooks={props.hooks} />
                     )}
             </Box>
         </Box>

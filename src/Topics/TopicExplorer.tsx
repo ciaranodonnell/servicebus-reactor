@@ -5,14 +5,15 @@ import { SubscriptionList } from "./SubscriptionList";
 import { SubscriptionExplorer } from "./SubscriptionExplorer";
 import { TopicDetails } from './TopicDetails';
 import { InProgressActivityReport } from '../InProgressTaskReport';
+import { ApplicationProps } from '../ApplicationHooks';
 
-interface TopicExplorerProps {
+interface TopicExplorerProps extends ApplicationProps {
     topic: Topic;
-    reportActivity: (report: InProgressActivityReport) => void;
 }
 
 export function TopicExplorer(props: TopicExplorerProps) {
-    const { topic, reportActivity } = props;
+    const { topic } = props;
+    const reportActivity = props.hooks.reportActivity;
 
     const [subscription, setSubscription] = React.useState<Subscription | undefined>();
 
@@ -31,7 +32,7 @@ export function TopicExplorer(props: TopicExplorerProps) {
                 </div>
                 <div className="right">
                     {(subscription instanceof Subscription) ?
-                        (<SubscriptionExplorer subscription={subscription} reportActivity={props.reportActivity} />)
+                        (<SubscriptionExplorer subscription={subscription} {...props} />)
                         : <></>
 
                     }

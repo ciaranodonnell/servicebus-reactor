@@ -5,10 +5,10 @@ import { Topic, Subscription } from "../AzureServiceBus/AzureServiceBusManager";
 import { SubscriptionList } from "./SubscriptionList";
 import { SubscriptionExplorer } from "./SubscriptionExplorer";
 import { InProgressActivityReport } from '../InProgressTaskReport';
+import { ApplicationProps } from '../ApplicationHooks';
 
-interface TopicExplorerProps {
+interface TopicExplorerProps extends ApplicationProps {
     topic: Topic;
-    reportActivity: (report: InProgressActivityReport) => void;
 }
 
 export function TopicDetails(props: TopicExplorerProps) {
