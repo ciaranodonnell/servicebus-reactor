@@ -1,3 +1,4 @@
+import { registerDefaultFontFaces } from "@fluentui/react";
 
 export function formatBytesForPresentation(bytes: number | undefined): string | undefined {
     if (bytes === undefined) return undefined;
@@ -26,15 +27,19 @@ export function convertTimespanToString(value: string | undefined): string {
     if (value === undefined) return "";
     var tokens = value.split(/[A-Z]+/);
 
-    const formatPart = (part: string): string => parseFloat(part).toLocaleString('en');
-    const getPart = (part: string, name: string, isEnd?: boolean): string => {
-        if (part === "") return "";
-        if (part === "0") return "";
-        if (isEnd === undefined) isEnd = false;
-
-
-        return `${formatPart(part)} ${name}${part == "1" ? "" : "s"}${!isEnd ? ", " : ""}`;
+    function formatPart(part: string) {
+        let num = parseFloat(part);
+        if (num == NaN) num = 0;
+        return num.toLocaleString('en');
     }
+
+    const getPart = (part: string, name: string, isEnd?: boolean): string => {
+        if (part === undefined || part === "" || part === "0") return "";
+        if (isEnd === undefined) isEnd = false;
+        return `${!isEnd ? ", " : ""} ${formatPart(part)} ${name}${part == "1" ? "" : "s"}`;
+    }
+
+
     let days = tokens[1];
     let hours = tokens[2];
     let minutes = tokens[3];
@@ -44,9 +49,11 @@ export function convertTimespanToString(value: string | undefined): string {
     if (years > 1) {
         years = Math.floor(years);
         days = (daysAsNumber - (years * 365)).toString();
+    } else {
+        years = 0;
     }
-
-    return `${getPart(years.toString(), "year")}${getPart(days, "day")}${getPart(tokens[2], "hour")}${getPart(tokens[3], "minute")}${getPart(tokens[4], "second", true)}`;
+    let result = `${getPart(years.toString(), "year", true)}${getPart(days, "day", years < 1)}${getPart(hours, "hour")}${getPart(minutes, "minute")}${getPart(seconds, "second")}`;
+    return result;
 }
 
 export interface LoadingData<T> {
