@@ -42,20 +42,20 @@ Switching to the messages tab allows you to Peek the messages:
 
 Features looking to implement in the near term:
 
-1. Moving all messages from Queue/Subscription to Dead Letter Queue
-2. Moving all messages from Dead Letter Queue back to Queue/Subscription 
-3. Purging all messages from a Queue/Subscription
-4. Purging all messages from a Dead Letter Queue
-5. Message Viewer to see details of a message
-6. Viewing Subscription filters
-7. Editing Subscription filters
-8. Creating a new Queue
-9. Creating a new Topic
-10. Creating a new Subscription
-11. Setting up forwarding
-12. Sending a message
-13. Message formatters to allow easy sending/receiving of MassTransit or nServiceBus messages
-14. Ability to save connections
-15. Ability to peek/receive Queue/Subscription/DLQ to a file
-16. Ability to send to Queue/Topic from a file
+- [ ] Moving all messages from Queue/Subscription to Dead Letter Queue
+- [x] Moving all messages from Dead Letter Queue back to Queue/Subscription
+- [ ] Purging all messages from a Queue/Subscription
+- [ ] Purging all messages from a Dead Letter Queue
+- [ ] Message Viewer to see details of a message
+- [ ] Viewing Subscription filters
+- [ ] Editing Subscription filters
+- [ ] Creating a new Queue
+- [ ] Creating a new Topic
+- [ ] Creating a new Subscription
+- [ ] Setting up forwarding
+- [ ] Sending a message
+- [ ] Message formatters to allow easy sending/receiving of MassTransit or nServiceBus messages
+- [ ] Ability to save connections
+- [ ] Ability to peek/receive Queue/Subscription/DLQ to a file
+- [ ] Ability to send to Queue/Topic from a file
 

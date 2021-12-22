@@ -15,7 +15,7 @@ function App() {
 
   const [serviceBus, setServiceBus] = React.useState<sbm.AzureServiceBusManager | undefined>(undefined);
   const [namespace, setNamespace] = React.useState<string>("");
-  const [lastActivityStatus, setLastActivityStatus] = React.useState<InProgressActivityReport | undefined>(undefined);
+  const [activityReports, setActivityReports] = React.useState<InProgressActivityReport[]>([]);
 
   useEffect(() => {
     document.title = `ServiceBus-Reactor ${namespace === undefined || namespace.length == 0 ? "" : " - " + namespace}`
@@ -31,11 +31,8 @@ function App() {
   };
 
   function reportActivity(report: InProgressActivityReport) {
-    setLastActivityStatus(report);
-    console.log("Activity reported:", report.description, report.done, report.total);
-    if (report.state == "completed") {
-      setTimeout(() => setLastActivityStatus(undefined), 5000);
-    }
+    let newReports = [...activityReports, report];
+    setActivityReports(newReports);
   }
 
   const appHooks = { reportActivity: reportActivity };
@@ -48,7 +45,7 @@ function App() {
       <div className="appBody">
         {serviceBus !== undefined && <ServiceBusDetails serviceBus={serviceBus} key={serviceBus?.connectionString} hooks={appHooks} />}
       </div>
-      <StatusBar statusReport={lastActivityStatus} />
+      <StatusBar statusReports={activityReports} />
     </div>
   );
 
