@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Box, Grid } from "@mui/material";
-import { ApplicationHooks } from "../ApplicationHooks";
+import { ApplicationHooks, InProgressActivityReport } from "../ApplicationHooks";
 import { Subscription } from "../AzureServiceBus/AzureServiceBusManager";
 import { RefreshButton } from "../RefreshButton";
 
@@ -12,12 +12,16 @@ import { SubscriptionProps } from "./SubscriptionProps";
 export function SubscriptionProperties(props: SubscriptionProps) {
     const subscription = props.subscription;
     const [runtimeStateLoaded, setRuntimeStateLoaded] = React.useState<any>(false);
-
+    const reportActivity = props.hooks.reportActivity;
 
     function doLoadRuntimeState() {
         setRuntimeStateLoaded(false);
+        reportActivity(new InProgressActivityReport("subLoadRuntimeState",
+            `Loading runtime state for ${subscription.topicName}`, "inProgress", 0, 0));
+
         subscription.loadRuntimeValues().then(() => {
-            console.log("Loaded subscription runtime state");
+            reportActivity(new InProgressActivityReport("subLoadRuntimeState",
+                `Loading runtime state for ${subscription.topicName}`, "completed", 0, 0));
             setRuntimeStateLoaded(true);
         });
     }
@@ -54,7 +58,7 @@ export function SubscriptionProperties(props: SubscriptionProps) {
             </Grid>
         </Box>
         <Box>
-            <h2>Runtime Properties <RefreshButton clicked={() => { doLoadRuntimeState(); }} /></h2>
+            <h2>Runtime Properties <RefreshButton clicked={() => { console.log("refresh runtime state clicked"); doLoadRuntimeState(); }} /></h2>
             <ActiveMessageDetails subscription={subscription} />
         </Box>
 

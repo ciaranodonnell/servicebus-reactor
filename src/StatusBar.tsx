@@ -1,39 +1,26 @@
 import React from 'react';
 
 import { InProgressActivityReport } from './ApplicationHooks';
+import { ProgressImage } from './ProgressImage';
+export function StatusBar(props: { statusReports: InProgressActivityReport[] }) {
 
-export function StatusBar(props: { statusReport: InProgressActivityReport | undefined }) {
+    const allActivityReports = props.statusReports;
+    const [displayStatus, setDisplayStatus] = React.useState<InProgressActivityReport | undefined>(allActivityReports.length > 0 ? allActivityReports[allActivityReports.length - 1] : undefined);
 
-    const lastActivityStatus = props.statusReport;
-
-
-    function ProgressImage(props: { state: "inProgress" | "completed" | "cancelled" | "failed" }) {
-
-        const style = { width: 20, height: 20 };
-
-        if (props.state === "inProgress") {
-            return (<img src="images/inprogress.gif" alt="in progress" style={style} />);
-        } else if (props.state === "completed") {
-            return (<img src="images/completed.gif" alt="in progress" style={style} />);
-        } else if (props.state === "failed") {
-            return (<img src="images/failed.gif" alt="in progress" style={style} />);
-        } else if (props.state === "cancelled") {
-            return (<img src="images/cancelled.png" alt="in progress" style={style} />);
-        } else
-            return (<></>);
+    if (displayStatus !== undefined && displayStatus.state == "completed") {
+        setTimeout(() => setDisplayStatus(undefined), 5000);
     }
-
 
     return (<div className="statusBar">
 
 
-        {(lastActivityStatus !== undefined) ?
+        {(displayStatus !== undefined) ?
             (
                 <>
-                    <ProgressImage state={lastActivityStatus.state} key={lastActivityStatus.state} />
-                    <span className="statusBarText">{lastActivityStatus.description}</span>
-                    {lastActivityStatus !== undefined && lastActivityStatus.total > 0 ?
-                        (<span className="statusBarPercent">({lastActivityStatus.done} of {lastActivityStatus.total})</span>)
+                    <ProgressImage state={displayStatus.state} key={displayStatus.state} />
+                    <span className="statusBarText">{displayStatus.description}</span>
+                    {displayStatus !== undefined && displayStatus.total > 0 ?
+                        (<span className="statusBarPercent">({displayStatus.done} of {displayStatus.total})</span>)
                         : (<></>)}
                 </>)
             :
