@@ -4,9 +4,9 @@ import { Topic } from "./Topic";
 import { Subscription } from "./Subscription";
 
 export class ReceivedMessage {
-    private receiveMode: string;
-    private receviedFrom: Queue | Subscription;
-    body: string | undefined;
+    receiveMode: string;
+    receivedFrom: string;
+    body: any | undefined;
     deliveryCount: number | undefined;
     enqueuedTimeUtc: Date | undefined;
     scheduledEnqueueTimeUtc: Date | undefined;
@@ -16,10 +16,17 @@ export class ReceivedMessage {
     subject: string | undefined;
     timeToLive: number | undefined;
     to: string | undefined;
+    contentType: string | undefined;
+    lockToken: string | undefined;
+    expiresAt: any;
+    customHeaders: { [key: string]: string | number | boolean | Date | null; } | undefined;
+    correlationId: string | number | Buffer | undefined;
 
-    constructor(recieveMode: string, receivedFrom: Queue | Subscription, message: asb.ServiceBusReceivedMessage | undefined) {
+    constructor(recieveMode: string, receivedFrom: string, message: asb.ServiceBusReceivedMessage | undefined) {
+        this.receivedFrom = receivedFrom;
+        this.correlationId = message?.correlationId;
         this.receiveMode = recieveMode;
-        this.receviedFrom = receivedFrom;
+        this.receivedFrom = receivedFrom;
         this.body = message?.body;
         this.deliveryCount = message?.deliveryCount;
         this.enqueuedTimeUtc = message?.enqueuedTimeUtc;
@@ -30,5 +37,10 @@ export class ReceivedMessage {
         this.subject = message?.subject;
         this.timeToLive = message?.timeToLive;
         this.to = message?.to;
+        this.contentType = message?.contentType;
+        this.lockToken = message?.lockToken;
+        this.expiresAt = message?.expiresAtUtc?.toLocaleString();
+        this.customHeaders = message?.applicationProperties;
     }
+
 }

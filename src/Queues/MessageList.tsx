@@ -10,6 +10,7 @@ interface MessageListProps {
     didError: boolean;
     errorMessage?: string;
     queue: { lastReceivedMessages: ReceivedMessage[] };
+    messageSelected?: (message: ReceivedMessage) => void;
 }
 
 export function MessageList(props: MessageListProps) {
@@ -80,7 +81,9 @@ export function MessageList(props: MessageListProps) {
     }
 
     function messageDoubleClicked(params: GridRowParams<{ [key: string]: any; }>, event: MuiEvent<React.MouseEvent<HTMLElement, MouseEvent>>, details: GridCallbackDetails) {
-        alert(`messageDoubleClicked ${params.row.messageId}`);
+        if (props.messageSelected !== undefined) {
+            props.messageSelected(params.row as ReceivedMessage);
+        }
     }
 
     const gridData = getGridData();

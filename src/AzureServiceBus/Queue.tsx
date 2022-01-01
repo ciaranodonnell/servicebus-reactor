@@ -44,7 +44,7 @@ export class Queue implements Endpoint {
     async peekMessages(numMessages: number): Promise<ReceivedMessage[]> {
         const receiver = this.sb.createReceiver(this.name);
         const messages = await receiver.peekMessages(numMessages);
-        this.lastReceivedMessages = messages.map(m => new ReceivedMessage("peek", this, m));
+        this.lastReceivedMessages = messages.map(m => new ReceivedMessage("peek", this.name, m));
         this.hasReceviedMessages = true;
         return this.lastReceivedMessages;
     }
