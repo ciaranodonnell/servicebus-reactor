@@ -43,7 +43,7 @@ export function ServiceBusDetails(props: ServiceBusProps) {
                     </TabPanel>
                 </TabControl>
             </Box>
-            <Box className="queueOrSubscriptionExplorer">
+            <Box className="queueOrSubscriptionExplorer" >
                 {selectedItem === undefined ? (<></>) :
                     selectedItem instanceof Queue ? (
                         <QueueExplorer queue={selectedItem} key={"q-" + selectedItem.name} />

@@ -52,7 +52,7 @@ export class Subscription {
 
     private async peekMessagesFromReceiver(numMessages: number, receiver: asb.ServiceBusReceiver) {
         const messages = await receiver.peekMessages(numMessages);
-        this.lastReceivedMessages = messages.map(m => new ReceivedMessage("peek", this, m));
+        this.lastReceivedMessages = messages.map(m => new ReceivedMessage("peek", receiver.entityPath, m));
         this.hasReceviedMessages = true;
         return this.lastReceivedMessages;
     }

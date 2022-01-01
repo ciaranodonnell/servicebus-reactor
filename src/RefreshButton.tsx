@@ -4,6 +4,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 export function RefreshButton(props: { clicked: () => void }) {
     const clicked = props.clicked ?? (() => { });
+
     return (<IconButton aria-label="refresh section" onClick={(event) => clicked()}>
         <RefreshIcon />
     </IconButton >)

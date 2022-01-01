@@ -1,9 +1,10 @@
 import { Box, Button } from "@mui/material";
 import React from "react";
 import { InProgressActivityReport } from "../ApplicationHooks";
-import { Subscription } from "../AzureServiceBus/AzureServiceBusManager";
+import { ReceivedMessage, Subscription } from "../AzureServiceBus/AzureServiceBusManager";
 import { MessageList } from "../Queues/MessageList";
 import { ActiveMessageDetails } from "./ActiveMessageDetails";
+import { MessageDetails } from "./MessageDetails";
 import { SubscriptionProps } from "./SubscriptionProps";
 
 
@@ -24,6 +25,7 @@ export function SubscriptionMessages(props: SubscriptionProps) {
     const subscription = props.subscription;
     const reportActivity = props.hooks.reportActivity;
     const [messageList, setMessageList] = React.useState(new PeekMessagesList());
+    const [selectedMessage, setSelectedMessage] = React.useState<ReceivedMessage | undefined>();
 
     function MessageTaskButtons(props: { subscription: Subscription, reportActivity: (report: InProgressActivityReport) => void }) {
         const subscription = props.subscription;
@@ -114,7 +116,12 @@ export function SubscriptionMessages(props: SubscriptionProps) {
                 <MessageList
                     didError={messageList.didError}
                     isLoaded={messageList.isLoaded}
-                    queue={subscription} />
+                    queue={subscription}
+                    messageSelected={(message) => { setSelectedMessage(message); }}
+                />
+
+                {selectedMessage ? (<MessageDetails message={selectedMessage} hooks={props.hooks} />) : (<></>)}
+
             </Box>
         </div>
     </>);
