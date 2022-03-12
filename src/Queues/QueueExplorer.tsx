@@ -12,6 +12,7 @@ import { Button } from "@mui/material";
 import { TabControl, TabPanel } from "../TabPanel";
 import { MessageList } from "./MessageList";
 import { MessageList2 } from "./MessageList2";
+import { MessageInputDialog } from "../MessageInputDialog";
 
 export interface QueueExplorerProps {
     queue: Queue;
@@ -59,6 +60,7 @@ export function QueueExplorer(props: QueueExplorerProps) {
     const [runtimeStateLoaded, setRuntimeStateLoaded] = React.useState<any>(false);
     const [messageList, setMessageList] = React.useState(new PeekMessagesList());
 
+    const [isSendingMessage, setIsSendingMessage] = React.useState(false);
 
     // Load the runtime state for the queue and then update the UI
     useEffect(() => {
@@ -68,6 +70,7 @@ export function QueueExplorer(props: QueueExplorerProps) {
             setRuntimeStateLoaded(true);
         });
     }, [queue]);
+
 
 
     function doPeekMessages(queue: Queue): PeekMessagesList {
@@ -130,11 +133,17 @@ export function QueueExplorer(props: QueueExplorerProps) {
                             variant="contained"
                             onClick={() => doPeekMessages(queue)}
                         >Peek Messages</Button>
+
                         <MessageList didError={messageList.didError} isLoaded={messageList.isLoaded}
                             queue={queue} />
                     </Box>
                 </div>
             </TabPanel>
         </TabControl>
+
+        <MessageInputDialog
+            destination={queue}
+        />
+
     </div >);
 }

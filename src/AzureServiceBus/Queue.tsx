@@ -19,6 +19,7 @@ export class Queue implements Endpoint {
         this.sbac = sbac;
         this.sb = sb;
     }
+
     async loadRuntimeValues(): Promise<void> {
         this.runtimeProps = await this.sbac.getQueueRuntimeProperties(this.name);
         console.log("loadRuntimeValues", this.runtimeProps, this.activeMessageCount);
@@ -47,6 +48,15 @@ export class Queue implements Endpoint {
         this.lastReceivedMessages = messages.map(m => new ReceivedMessage("peek", this.name, m));
         this.hasReceviedMessages = true;
         return this.lastReceivedMessages;
+    }
+
+
+    async sendMessage(message: string, messageFormat: string, headers: { [key: string]: string | number | boolean | Date | null; }) {
+        await this.sb.createSender(this.name).sendMessages({
+            body: message,
+            contentType: messageFormat,
+            applicationProperties: headers
+        });
     }
 
 }
