@@ -1,6 +1,5 @@
 import { Box } from '@mui/system';
-import React from 'react';
-import { useEffect } from 'react';
+import React ,{ useEffect } from 'react';
 
 import './App.css';
 
