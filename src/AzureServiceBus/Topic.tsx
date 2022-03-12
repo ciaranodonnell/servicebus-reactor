@@ -42,4 +42,12 @@ export class Topic implements Endpoint {
         return this.subscriptions;
     }
 
+    async sendMessage(message: string, messageFormat: string, headers: { [key: string]: string | number | boolean | Date | null; }) {
+        await this.sb.createSender(this.name).sendMessages({
+            body: message,
+            contentType: messageFormat,
+            applicationProperties: headers
+        });
+    }
+
 }
