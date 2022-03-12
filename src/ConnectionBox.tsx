@@ -124,18 +124,3 @@ function ConnectionBox(props: ConnectionBoxProps) {
 }
 
 export default ConnectionBox;
-
-
-/*        <Stack horizontal className="ConnectionBox">
-            <Label>
-                Connection String:
-            </Label>
-placeholder="Enter connection string here"
-                <StyledInputBase
-
-                    inputProps={{ 'aria-label': 'connection string' }}
-                />
-            <PrimaryButton onClick={handleConnect}>Connect</PrimaryButton>
-
-        </Stack>
-*/
