@@ -58,6 +58,6 @@
   "devDependencies": {
     "@types/electron": "^1.6.10",
     "@types/react-syntax-highlighter": "^13.5.2",
-    "electron": "^16.0.4"
+    "electron": "^16.0.6"
   }
 }
